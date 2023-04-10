@@ -15,12 +15,23 @@
       font-family: sans-serif;
       background-color: #ededed;
     }
+    .center {
+      position: absolute;
+      top: 50%;
+      transform: translate(0, -50%);
+    }
   </style>
-  <title>inline-audio</title>
+  <title>Inline Audio Player</title>
 </head>
 
 <body>
-  <inline-audio></inline-audio>
+  <div class="center">
+    <p class="text">
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas elementum erat odio, at venenatis nunc sagittis vitae. Sed a dolor eleifend, facilisis massa sit amet, cursus ipsum. In consectetur orci ac risus tincidunt eleifend. Nam tortor lacus, dictum eget fringilla eget, molestie at libero. Aliquam accumsan dapibus accumsan.
+      <inline-audio id="ia"> Vivamus tincidunt augue id felis pulvinar blandit.</inline-audio>
+      Vestibulum sit amet tempus nulla. Suspendisse dapibus lectus sed aliquet sagittis. Nulla molestie auctor ullamcorper. Aenean imperdiet, felis eget interdum sagittis, arcu quam facilisis enim, ac laoreet libero purus vel tellus. In eu fermentum enim. Sed vel risus mi. Proin pellentesque porttitor semper.
+    </p>
+  </div>
 
   <script type="module" src="./src/inline-audio.js"></script>
 </body>
