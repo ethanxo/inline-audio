@@ -10,7 +10,8 @@ class InlineAudio extends LitElement {
     size: { type: Number },
     volume: { type: Number },
     playing: { type: Boolean },
-    url: { type: String }
+    url: { type: String },
+    playedratio: { type: Number }
   }
 
   static styles = css`
@@ -35,6 +36,7 @@ class InlineAudio extends LitElement {
     this.size = 18;
     this.volume = 1;
     this.playing = false;
+    this.url = "https://download.samplelib.com/mp3/sample-15s.mp3";
   } 
 
   a_play() {
@@ -46,6 +48,7 @@ class InlineAudio extends LitElement {
   a_pause() {
     let audio = this.shadowRoot.getElementById('audio');
     audio.pause();
+    audio.currentTime = 0;
     this.playing = false;
     this.icon = "av:play-arrow";
   }
@@ -56,11 +59,27 @@ class InlineAudio extends LitElement {
       this.a_play();    
   }
 
+  highlight() {
+    if (!this.playing) {
+      if (this.shadowRoot.querySelector('span').style.background == "linear-gradient(to right, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0.07) 0)")
+        return
+      else
+        this.shadowRoot.querySelector('span').style.background = "linear-gradient(to right, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0.07) 0)";
+    }
+    else {
+      let audio = this.shadowRoot.getElementById('audio');
+      this.playedratio = audio.currentTime / audio.duration;
+      this.shadowRoot.querySelector('span').style.background = "linear-gradient(to right, rgba(0, 0, 0, 0.15) " + this.playedratio * 100 + "%, rgba(0, 0, 0, 0.05) 0)";
+    }
+  }
+
   firstUpdated() {
     let audio = this.shadowRoot.getElementById('audio');
     let icon = this.shadowRoot.getElementById('icon');
     audio.volume = this.volume;
-    icon.addEventListener("click", this.a_toggle);
+    icon.addEventListener("click", this.a_toggle.bind(this)); // toggle on icon click
+    audio.addEventListener("ended", this.a_pause.bind(this)); // reset upon end as if it was manually stopped
+    setInterval(this.highlight.bind(this), 50); // 20x per second
   }
 
   render() {
@@ -69,7 +88,7 @@ class InlineAudio extends LitElement {
       <audio id="audio" preload="auto">
         <source src="${this.url}">
       </audio>
-      <simple-icon id="icon" accent-color="grey" style="--simple-icon-width:${this.size}px; --simple-icon-height:${this.size}px;" icon="${this.icon}"></simple-icon>
+      <simple-icon id="icon" accent-color="black" style="--simple-icon-width:${this.size}px; --simple-icon-height:${this.size}px;" icon="${this.icon}"></simple-icon>
       <slot></slot>
     </span>
     `;
