@@ -2,40 +2,75 @@ import { LitElement, html, css } from 'lit';
 import "@lrnwebcomponents/simple-icon/simple-icon.js";
 import "@lrnwebcomponents/simple-icon/lib/simple-icons.js";
 
+// https://github.com/elmsln/issues/issues/1102
+
 class InlineAudio extends LitElement {
   static properties = {
-    placeholder: { type: String },
+    icon: { type: String },
+    size: { type: Number },
+    volume: { type: Number },
+    playing: { type: Boolean },
+    url: { type: String }
   }
 
   static styles = css`
-    :host {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      font-size: calc(10px + 2vmin);
-      color: #1a2b42;
-      max-width: 960px;
-      margin: 0 auto;
-      text-align: center;
-      background-color: var(--inline-audio-background-color);
+    @import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+
+    span {
+      margin: 0px 4px;
+      //background-color: rgba(0, 0, 0, 0.15);
+      background: linear-gradient(to right, rgba(0, 0, 0, 0.15) 100%, rgba(0, 0, 0, 0.05) 0);
+      border-radius: 4px;
+      font-family: 'Lato', sans-serif;
     }
 
-    span:hover {
-
+    #audio {
+      display: none;
     }
   `;
 
   constructor() {
     super();
+    this.icon = "av:play-arrow"; // av:play-arrow av:pause
+    this.size = 18;
+    this.volume = 1;
+    this.playing = false;
+  } 
+
+  a_play() {
+    let audio = this.shadowRoot.getElementById('audio');
+    audio.play();
+    this.playing = true;
+    this.icon = "av:pause";
+  }
+  a_pause() {
+    let audio = this.shadowRoot.getElementById('audio');
+    audio.pause();
+    this.playing = false;
+    this.icon = "av:play-arrow";
+  }
+  a_toggle() {
+    if (this.playing)
+      this.a_pause();
+    else
+      this.a_play();    
+  }
+
+  firstUpdated() {
+    let audio = this.shadowRoot.getElementById('audio');
+    let icon = this.shadowRoot.getElementById('icon');
+    audio.volume = this.volume;
+    icon.addEventListener("click", this.a_toggle);
   }
 
   render() {
     return html`
-    <span>
-      <simple-icon>
-      </simple-icon>
+    <span style="font-size:${this.size}px">
+      <audio id="audio" preload="auto">
+        <source src="${this.url}">
+      </audio>
+      <simple-icon id="icon" accent-color="grey" style="--simple-icon-width:${this.size}px; --simple-icon-height:${this.size}px;" icon="${this.icon}"></simple-icon>
+      <slot></slot>
     </span>
     `;
   }
